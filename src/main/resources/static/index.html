@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hostel Complaint Box Maintenance Tracker</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div id="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">CB</div>
+        <div>
+          <h1>ComplaintBox</h1>
+          <p>Hostel Support</p>
+        </div>
+      </div>
+
+      <nav id="navLinks">
+        <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+        <button class="nav-btn student-only" data-view="complaints">My Complaints</button>
+        <button class="nav-btn student-only" data-view="profile">Personal Details</button>
+        <button class="nav-btn student-only" data-view="create">New Complaint</button>
+        <button class="nav-btn admin-only" data-view="admin">Admin Panel</button>
+      </nav>
+
+      <div class="user-box" id="userBox">
+        <div class="avatar" id="userAvatar">U</div>
+        <div>
+          <strong id="userName">Not signed in</strong>
+          <span id="userRole">Guest</span>
+        </div>
+      </div>
+
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </aside>
+
+    <main class="main-panel">
+      <section id="authSection" class="auth-panel active">
+        <div class="auth-card">
+          <div class="auth-header">
+            <span class="badge">Hostel Complaint Box Maintenance Tracker</span>
+            <h2>Choose your portal</h2>
+          </div>
+
+          <div class="portal-options">
+            <a class="portal-option student-portal" href="/student-login.html">Student Login</a>
+            <a class="portal-option admin-portal" href="/admin-login.html">Admin Login</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="dashboardSection" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Overview</p>
+            <h3>Dashboard</h3>
+          </div>
+        </div>
+
+        <div id="dashboardStats" class="stats-grid"></div>
+      </section>
+
+      <section id="profileSection" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Student account</p>
+            <h3>Personal Details</h3>
+          </div>
+        </div>
+        <div id="profileDetails" class="profile-grid"></div>
+      </section>
+
+      <section id="complaintsSection" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Records</p>
+            <h3>My Complaints</h3>
+          </div>
+          <button class="secondary-btn" id="refreshComplaintsBtn">Refresh</button>
+        </div>
+        <div id="complaintsList" class="cards-grid"></div>
+      </section>
+
+      <section id="createSection" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">New request</p>
+            <h3>Report a Complaint</h3>
+          </div>
+        </div>
+
+        <form id="complaintForm" class="complaint-form">
+          <label for="complaintTitle">Complaint title</label>
+          <input id="complaintTitle" type="text" maxlength="100" placeholder="e.g. Bathroom tap is leaking" required />
+
+          <div class="field-row">
+            <div>
+              <label>Category</label>
+              <select id="complaintCategory">
+                <option value="PLUMBING">PLUMBING</option>
+                <option value="ELECTRICAL">ELECTRICAL</option>
+                <option value="CLEANING">CLEANING</option>
+                <option value="OTHER">OTHER</option>
+              </select>
+            </div>
+            <div>
+              <label>Priority</label>
+              <select id="complaintPriority">
+                <option value="LOW">LOW</option>
+                <option value="MEDIUM" selected>MEDIUM</option>
+                <option value="HIGH">HIGH</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div>
+              <label for="complaintBlock">Hostel block</label>
+              <input id="complaintBlock" type="text" maxlength="50" placeholder="Block A" required />
+            </div>
+            <div>
+              <label for="complaintFloor">Floor</label>
+              <input id="complaintFloor" type="text" maxlength="20" placeholder="2" required />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div>
+              <label for="complaintRoom">Room number</label>
+              <input id="complaintRoom" type="text" maxlength="10" placeholder="205" required />
+            </div>
+            <div>
+              <label for="complaintLandmark">Nearby landmark <span class="optional-label">Optional</span></label>
+              <input id="complaintLandmark" type="text" maxlength="100" placeholder="Near the common washroom" />
+            </div>
+          </div>
+
+          <label>Description</label>
+          <textarea id="complaintDescription" rows="5" placeholder="Describe the issue..." required></textarea>
+
+          <button class="primary-btn" type="submit">Submit Complaint</button>
+        </form>
+      </section>
+
+      <section id="adminSection" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Admin tools</p>
+            <h3>Complaint Management</h3>
+          </div>
+          <button class="secondary-btn" id="refreshAdminBtn">Refresh</button>
+        </div>
+        <div id="adminList" class="cards-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Login | ComplaintBox</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="auth-body">
+  <div class="auth-shell">
+    <div class="auth-card wide">
+      <div class="auth-header">
+        <span class="badge">Student Portal</span>
+        <h2>Student Login</h2>
+      </div>
+
+      <form id="studentLoginForm" class="auth-form">
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="student@hostel.com" required />
+
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Enter password" required />
+
+        <button class="primary-btn" type="submit">Login</button>
+      </form>
+
+      <a class="register-link" href="/student-register.html">Create Student Account</a>
+      <div class="auth-links">
+        <a href="/admin-login.html">Admin Login</a>
+        <a href="/">Home</a>
+      </div>
+
+      <div id="message" class="message"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('studentLoginForm');
+    const message = document.getElementById('message');
+
+    function setMessage(text, type) {
+      message.className = 'message';
+      if (type) message.classList.add(type);
+      message.textContent = text;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      try {
+        const response = await fetch('/api/auth/student/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || 'Login failed');
+        }
+
+        const user = { name: data.name, email: data.email, role: data.role, password };
+        localStorage.setItem('complaintboxUser', JSON.stringify(user));
+        setMessage(`${data.message} Welcome ${data.name}!`, 'success');
+        window.location.href = '/';
+      } catch (error) {
+        setMessage(error.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>

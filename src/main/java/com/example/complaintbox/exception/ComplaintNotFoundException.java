@@ -1,0 +1,7 @@
+package com.example.complaintbox.exception;
+
+public class ComplaintNotFoundException extends RuntimeException {
+    public ComplaintNotFoundException(Long id) {
+        super("Complaint not found with id " + id);
+    }
+}

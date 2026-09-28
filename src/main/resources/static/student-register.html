@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Registration | ComplaintBox</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="auth-body">
+  <div class="auth-shell">
+    <div class="auth-card wide">
+      <div class="auth-header">
+        <span class="badge">Student Registration</span>
+        <h2>Create Your Student Account</h2>
+      </div>
+
+      <form id="studentRegisterForm" class="auth-form">
+        <div class="two-cols">
+          <div>
+            <label for="name">Full Name</label>
+            <input id="name" type="text" placeholder="Student name" required />
+          </div>
+          <div>
+            <label for="registerNumber">Register Number</label>
+            <input id="registerNumber" type="text" placeholder="20CS101" required />
+          </div>
+        </div>
+
+        <div class="two-cols">
+          <div>
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="student@hostel.com" required />
+          </div>
+          <div>
+            <label for="phoneNumber">Phone Number</label>
+            <input id="phoneNumber" type="tel" placeholder="9876543210" required />
+          </div>
+        </div>
+
+        <div class="two-cols">
+          <div>
+            <label for="department">Department</label>
+            <input id="department" type="text" placeholder="Computer Science" required />
+          </div>
+          <div>
+            <label for="hostelBlock">Hostel Block</label>
+            <input id="hostelBlock" type="text" placeholder="Block A" required />
+          </div>
+        </div>
+
+        <div class="two-cols">
+          <div>
+            <label for="roomNumber">Room Number</label>
+            <input id="roomNumber" type="text" placeholder="205" required />
+          </div>
+          <div>
+            <label for="floor">Floor</label>
+            <input id="floor" type="text" placeholder="2" required />
+          </div>
+        </div>
+
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Minimum 6 characters" required />
+
+        <button class="primary-btn" type="submit">Create Account</button>
+      </form>
+
+      <div class="auth-links">
+        <a href="/student-login.html">Already have an account? Login</a>
+        <a href="/admin-login.html">Admin Login</a>
+        <a href="/">Home</a>
+      </div>
+
+      <div id="message" class="message"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('studentRegisterForm');
+    const message = document.getElementById('message');
+
+    function setMessage(text, type) {
+      message.className = 'message';
+      if (type) message.classList.add(type);
+      message.textContent = text;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        registerNumber: document.getElementById('registerNumber').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        department: document.getElementById('department').value.trim(),
+        hostelBlock: document.getElementById('hostelBlock').value.trim(),
+        roomNumber: document.getElementById('roomNumber').value.trim(),
+        floor: document.getElementById('floor').value.trim(),
+        phoneNumber: document.getElementById('phoneNumber').value.trim(),
+        password: document.getElementById('password').value
+      };
+
+      try {
+        const response = await fetch('/api/auth/student/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || 'Registration failed');
+        }
+
+        setMessage(`Account created for ${data.name}. Redirecting to student login...`, 'success');
+        setTimeout(() => window.location.href = '/student-login.html', 1200);
+      } catch (error) {
+        setMessage(error.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>
