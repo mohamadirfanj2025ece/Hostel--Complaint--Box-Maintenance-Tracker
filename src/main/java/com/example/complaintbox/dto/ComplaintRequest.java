@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 
 // The user does NOT send status or dates. The backend sets them.
 public record ComplaintRequest(
-        @NotNull(message = "Category is required (PLUMBING, ELECTRICAL, CLEANING or OTHER)")
+        @NotNull(message = "Category is required")
         Category category,
 
         @NotBlank(message = "Complaint title is required")

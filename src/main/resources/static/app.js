@@ -197,74 +197,94 @@ async function loadStudentProfile() {
     const incomplete = ['registerNumber', 'department', 'hostelBlock', 'floor', 'roomNumber', 'phoneNumber']
       .some((field) => !profile[field]);
     if (incomplete) {
-      container.innerHTML = `
-        <form id="completeProfileForm" class="complaint-form">
-          <p class="eyebrow">Complete your profile</p>
-          <p>Finish these personal details to continue.</p>
-          <div class="two-cols">
-            <div><label for="profileRegisterNumber">Register number</label><input id="profileRegisterNumber" required /></div>
-            <div><label for="profileDepartment">Department</label><input id="profileDepartment" required /></div>
-          </div>
-          <div class="two-cols">
-            <div><label for="profileHostelBlock">Hostel block</label><input id="profileHostelBlock" required /></div>
-            <div><label for="profileFloor">Floor</label><input id="profileFloor" required /></div>
-          </div>
-          <div class="two-cols">
-            <div><label for="profileRoomNumber">Room number</label><input id="profileRoomNumber" required /></div>
-            <div><label for="profilePhoneNumber">Phone number</label><input id="profilePhoneNumber" required /></div>
-          </div>
-          <button class="primary-btn" type="submit">Save Personal Details</button>
-          <div id="profileMessage" class="message"></div>
-        </form>`;
-      const profileFields = {
-        profileRegisterNumber: profile.registerNumber,
-        profileDepartment: profile.department,
-        profileHostelBlock: profile.hostelBlock,
-        profileFloor: profile.floor,
-        profileRoomNumber: profile.roomNumber,
-        profilePhoneNumber: profile.phoneNumber
-      };
-      Object.entries(profileFields).forEach(([id, value]) => {
-        document.getElementById(id).value = value || '';
-      });
-      document.getElementById('completeProfileForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const payload = {
-          registerNumber: document.getElementById('profileRegisterNumber').value.trim(),
-          department: document.getElementById('profileDepartment').value.trim(),
-          hostelBlock: document.getElementById('profileHostelBlock').value.trim(),
-          floor: document.getElementById('profileFloor').value.trim(),
-          roomNumber: document.getElementById('profileRoomNumber').value.trim(),
-          phoneNumber: document.getElementById('profilePhoneNumber').value.trim()
-        };
-        try {
-          await apiRequest('/api/students/me/profile', {
-            method: 'PUT',
-            headers: setAuthHeader(),
-            body: JSON.stringify(payload)
-          });
-          await loadStudentProfile();
-        } catch (error) {
-          setMessage(document.getElementById('profileMessage'), error.message, 'error');
-        }
-      });
+      renderStudentProfileForm(profile, container, false);
       return;
     }
-    const fields = [
-      ['Full name', profile.name],
-      ['Email', profile.email],
-      ['Register number', profile.registerNumber],
-      ['Department', profile.department],
-      ['Hostel block', profile.hostelBlock],
-      ['Floor', profile.floor],
-      ['Room number', profile.roomNumber],
-      ['Phone number', profile.phoneNumber]
-    ];
-    container.innerHTML = fields.map(([label, value]) => `
-      <div class="profile-item"><span>${label}</span><strong>${escapeHtml(value || 'Not provided')}</strong></div>
-    `).join('');
+    renderStudentProfileDetails(profile, container);
   } catch (error) {
     container.innerHTML = `<div class="empty-state">${error.message}</div>`;
+  }
+}
+
+function renderStudentProfileDetails(profile, container) {
+  const fields = [
+    ['Full name', profile.name],
+    ['Email', profile.email],
+    ['Register number', profile.registerNumber],
+    ['Department', profile.department],
+    ['Hostel block', profile.hostelBlock],
+    ['Floor', profile.floor],
+    ['Room number', profile.roomNumber],
+    ['Phone number', profile.phoneNumber]
+  ];
+  container.innerHTML = `
+    <div class="profile-toolbar"><button class="secondary-btn" id="editProfileBtn" type="button">Edit details</button></div>
+    ${fields.map(([label, value]) => `
+      <div class="profile-item"><span>${label}</span><strong>${escapeHtml(value || 'Not provided')}</strong></div>
+    `).join('')}`;
+  document.getElementById('editProfileBtn').addEventListener('click', () => {
+    renderStudentProfileForm(profile, container, true);
+  });
+}
+
+function renderStudentProfileForm(profile, container, canCancel) {
+  container.innerHTML = `
+    <form id="completeProfileForm" class="complaint-form">
+      ${canCancel ? '' : '<p class="eyebrow">Complete your profile</p><p>Finish these personal details to continue.</p>'}
+      <div class="two-cols">
+        <div><label for="profileRegisterNumber">Register number</label><input id="profileRegisterNumber" required /></div>
+        <div><label for="profileDepartment">Department</label><input id="profileDepartment" required /></div>
+      </div>
+      <div class="two-cols">
+        <div><label for="profileHostelBlock">Hostel block</label><input id="profileHostelBlock" required /></div>
+        <div><label for="profileFloor">Floor</label><input id="profileFloor" required /></div>
+      </div>
+      <div class="two-cols">
+        <div><label for="profileRoomNumber">Room number</label><input id="profileRoomNumber" required /></div>
+        <div><label for="profilePhoneNumber">Phone number</label><input id="profilePhoneNumber" required /></div>
+      </div>
+      <div class="profile-form-actions">
+        <button class="primary-btn" type="submit">${canCancel ? 'Save' : 'Save Personal Details'}</button>
+        ${canCancel ? '<button class="secondary-btn" id="cancelProfileEdit" type="button">Cancel</button>' : ''}
+      </div>
+      <div id="profileMessage" class="message"></div>
+    </form>`;
+  const profileFields = {
+    profileRegisterNumber: profile.registerNumber,
+    profileDepartment: profile.department,
+    profileHostelBlock: profile.hostelBlock,
+    profileFloor: profile.floor,
+    profileRoomNumber: profile.roomNumber,
+    profilePhoneNumber: profile.phoneNumber
+  };
+  Object.entries(profileFields).forEach(([id, value]) => {
+    document.getElementById(id).value = value || '';
+  });
+  document.getElementById('completeProfileForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const payload = {
+      registerNumber: document.getElementById('profileRegisterNumber').value.trim(),
+      department: document.getElementById('profileDepartment').value.trim(),
+      hostelBlock: document.getElementById('profileHostelBlock').value.trim(),
+      floor: document.getElementById('profileFloor').value.trim(),
+      roomNumber: document.getElementById('profileRoomNumber').value.trim(),
+      phoneNumber: document.getElementById('profilePhoneNumber').value.trim()
+    };
+    try {
+      await apiRequest('/api/students/me/profile', {
+        method: 'PUT',
+        headers: setAuthHeader(),
+        body: JSON.stringify(payload)
+      });
+      await loadStudentProfile();
+    } catch (error) {
+      setMessage(document.getElementById('profileMessage'), error.message, 'error');
+    }
+  });
+  if (canCancel) {
+    document.getElementById('cancelProfileEdit').addEventListener('click', () => {
+      renderStudentProfileDetails(profile, container);
+    });
   }
 }
 
